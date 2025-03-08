@@ -6,15 +6,13 @@ import (
 
 type InspectPanel struct {
 	*BasePanel
-	lines      []string
-	focusStyle tcell.Style
+	lines []string
 }
 
 func NewInspectPanel() *InspectPanel {
 	return &InspectPanel{
-		BasePanel:  NewBasePanel(),
-		lines:      []string{},
-		focusStyle: tcell.StyleDefault.Background(tcell.ColorLightBlue),
+		BasePanel: NewBasePanel(),
+		lines:     []string{},
 	}
 }
 
@@ -34,7 +32,6 @@ func (i *InspectPanel) Draw(screen tcell.Screen) {
 
 		y := i.y + (j - i.activeLine)
 
-		screen.SetContent(i.BasePanel.x, y, ' ', nil, i.focusStyle)
 		i.BasePanel.DrawText(screen, y, i.style, line)
 	}
 }
