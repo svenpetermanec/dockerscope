@@ -64,6 +64,7 @@ func (t *Terminal) Start() {
 			}
 		case *tcell.EventResize:
 			t.screen.Sync()
+			t.layoutPanels()
 		}
 	}
 }
@@ -98,4 +99,20 @@ func (t *Terminal) handleGlobalKey(ev *tcell.EventKey) {
 	default:
 		return
 	}
+}
+
+func (t *Terminal) layoutPanels() {
+	width, height := t.screen.Size()
+
+	commandWidth := 10
+	resourceWidth := width / 2
+	inspectWidth := width - commandWidth - resourceWidth
+
+	commandPanel := t.panels[0]
+	resourcePanel := t.panels[1]
+	inspectPanel := t.panels[2]
+
+	commandPanel.Resize(0, 0, commandWidth, height)
+	resourcePanel.Resize(commandWidth, 0, resourceWidth, height)
+	inspectPanel.Resize(commandWidth+resourceWidth, 0, inspectWidth, height)
 }

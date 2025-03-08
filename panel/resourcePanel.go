@@ -15,9 +15,9 @@ type ResourcePanel struct {
 	selectedStyle    tcell.Style
 }
 
-func NewResourcePanel(x, y, width int, onResourceChange func(resource string)) *ResourcePanel {
+func NewResourcePanel(onResourceChange func(resource string)) *ResourcePanel {
 	return &ResourcePanel{
-		BasePanel:        NewBasePanel(x, y, width),
+		BasePanel:        NewBasePanel(),
 		resources:        []string{},
 		lines:            []string{},
 		onResourceChange: onResourceChange,
@@ -33,6 +33,8 @@ func (r *ResourcePanel) UpdateContent(resources []string, lines []string) {
 		r.activeLine = 0
 	}
 
+	r.horizontal = 0
+
 	r.maxWidth = len(
 		slices.MaxFunc(
 			lines, func(a, b string) int {
@@ -45,19 +47,26 @@ func (r *ResourcePanel) UpdateContent(resources []string, lines []string) {
 }
 
 func (r *ResourcePanel) Draw(screen tcell.Screen) {
-	for i, line := range r.lines {
+	visible := r.height - 2
+	start := 0
 
-		y := r.y + i + 2
+	if r.activeLine > visible {
+		start = r.activeLine - visible
+	}
+
+	for i := 0; i < r.height && start+i < len(r.lines); i++ {
+
+		y := r.y + i
 		style := r.style
 
-		if i-1 == r.activeLine {
+		if start+i == r.activeLine+1 {
 			style = tcell.StyleDefault.Background(tcell.ColorDarkGray)
 			if r.focused {
 				style = r.selectedStyle
 			}
 		}
 
-		r.BasePanel.DrawText(screen, r.x, y, style, line)
+		r.BasePanel.DrawText(screen, y, style, r.lines[start+i])
 	}
 }
 

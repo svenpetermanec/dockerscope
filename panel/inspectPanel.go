@@ -10,11 +10,11 @@ type InspectPanel struct {
 	focusStyle tcell.Style
 }
 
-func NewInspectPanel(x, y, width int) *InspectPanel {
+func NewInspectPanel() *InspectPanel {
 	return &InspectPanel{
-		BasePanel:  NewBasePanel(x, y, width),
+		BasePanel:  NewBasePanel(),
 		lines:      []string{},
-		focusStyle: tcell.StyleDefault.Background(tcell.ColorDarkBlue),
+		focusStyle: tcell.StyleDefault.Background(tcell.ColorLightBlue),
 	}
 }
 
@@ -28,13 +28,14 @@ func (i *InspectPanel) UpdateContent(lines []string) {
 
 func (i *InspectPanel) Draw(screen tcell.Screen) {
 	for j, line := range i.lines {
-		if j < i.activeLine || j >= i.activeLine+i.maxHeight {
+		if j < i.activeLine || j >= i.activeLine+i.height {
 			continue
 		}
 
-		y := i.y + (j - i.activeLine) + 2
+		y := i.y + (j - i.activeLine)
 
-		i.BasePanel.DrawText(screen, i.x+2, y, i.style, line)
+		screen.SetContent(i.BasePanel.x, y, ' ', nil, i.focusStyle)
+		i.BasePanel.DrawText(screen, y, i.style, line)
 	}
 }
 

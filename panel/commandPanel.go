@@ -13,16 +13,15 @@ type CommandPanel struct {
 	selectedStyle   tcell.Style
 }
 
-func NewCommandPanel(x, y, width int, onCommandChange func(command docker.ListCommand)) *CommandPanel {
+func NewCommandPanel(onCommandChange func(command docker.ListCommand)) *CommandPanel {
 	commands := []docker.ListCommand{
 		{T: "container", F: "-a"},
 		{T: "image", F: "-a"},
 		{T: "network"},
-		// {T: "volume"}, TODO
 	}
 
 	return &CommandPanel{
-		BasePanel:       NewBasePanel(x, y, width),
+		BasePanel:       NewBasePanel(),
 		commands:        commands,
 		onCommandChange: onCommandChange,
 		selectedStyle:   tcell.StyleDefault.Background(tcell.ColorGreen),
@@ -31,7 +30,7 @@ func NewCommandPanel(x, y, width int, onCommandChange func(command docker.ListCo
 
 func (c *CommandPanel) Draw(screen tcell.Screen) {
 	for i, cmd := range c.commands {
-		y := c.y + i + 2
+		y := c.y + i
 		style := c.style
 
 		if i == c.activeLine {
@@ -41,7 +40,7 @@ func (c *CommandPanel) Draw(screen tcell.Screen) {
 			}
 		}
 
-		c.BasePanel.DrawText(screen, c.x, y, style, cmd.Type())
+		c.BasePanel.DrawText(screen, y, style, cmd.Type())
 	}
 }
 

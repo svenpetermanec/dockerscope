@@ -10,16 +10,9 @@ import (
 )
 
 func main() {
-	f, err := os.OpenFile("testlogfile", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-	if err != nil {
-		log.Fatalf("error opening file: %v", err)
-	}
-	defer f.Close()
-
-	log.SetOutput(f)
-	log.Println("This is a test log entry")
-
 	defer func() {
+		f, _ := os.OpenFile("log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+		log.SetOutput(f)
 		err := recover().(error)
 		log.Println(err.Error())
 	}()
@@ -31,13 +24,12 @@ func main() {
 		log.Println(err)
 	}
 
-	// w, h := screen.Size()
-	inspectPanel := panel.NewInspectPanel(100, 1, 80)
+	inspectPanel := panel.NewInspectPanel()
 
 	var commandPanel *panel.CommandPanel
 
 	resourcePanel := panel.NewResourcePanel(
-		15, 1, 80, func(resource string) {
+		func(resource string) {
 
 			selectedCmd := commandPanel.GetSelectedCommand()
 
@@ -53,7 +45,7 @@ func main() {
 	)
 
 	commandPanel = panel.NewCommandPanel(
-		1, 1, 10, func(command docker.ListCommand) {
+		func(command docker.ListCommand) {
 			resources, lines := dockerExecutor.ExecuteCommand(command)
 			resourcePanel.UpdateContent(resources, lines)
 		},

@@ -9,26 +9,29 @@ type Panel interface {
 	HandleKey(ev *tcell.EventKey) bool
 	Focus()
 	Unfocus()
+	Resize(x, y, w, h int)
 }
 
 type BasePanel struct {
-	x          int
-	y          int
-	width      int
-	maxWidth   int
-	maxHeight  int
+	x      int
+	y      int
+	width  int
+	height int
+
 	focused    bool
 	activeLine int
 	style      tcell.Style
 	horizontal int
+
+	maxWidth int
 }
 
-func NewBasePanel(x, y, width int) *BasePanel {
+func NewBasePanel() *BasePanel {
 	return &BasePanel{
-		x:          x,
-		y:          y,
-		width:      width,
-		maxHeight:  100,
+		x:          0,
+		y:          0,
+		width:      0,
+		height:     0,
 		focused:    false,
 		activeLine: 0,
 		style:      tcell.StyleDefault,
@@ -36,8 +39,10 @@ func NewBasePanel(x, y, width int) *BasePanel {
 	}
 }
 
-func (b *BasePanel) DrawText(screen tcell.Screen, x, y int, style tcell.Style, line string) {
+func (b *BasePanel) DrawText(screen tcell.Screen, y int, style tcell.Style, line string) {
+	x := b.x
 	maxWidth := x + b.width
+
 	for _, r := range []rune(line[b.horizontal:]) {
 		if x >= maxWidth {
 			continue
@@ -65,12 +70,12 @@ func (b *BasePanel) HandleKey(ev *tcell.EventKey, maxLines int) bool {
 		return true
 	case tcell.KeyRight:
 		if b.horizontal < b.maxWidth-b.width {
-			b.horizontal += 2
+			b.horizontal += 1
 		}
 		return true
 	case tcell.KeyLeft:
 		if b.horizontal > 1 {
-			b.horizontal -= 2
+			b.horizontal -= 1
 		}
 		return true
 	default:
@@ -84,4 +89,11 @@ func (b *BasePanel) Focus() {
 
 func (b *BasePanel) Unfocus() {
 	b.focused = false
+}
+
+func (b *BasePanel) Resize(x, y, w, h int) {
+	b.x = x
+	b.y = y
+	b.width = w
+	b.height = h
 }
