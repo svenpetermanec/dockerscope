@@ -2,6 +2,8 @@
 
 Dockerscope is an interactive, terminal-based tool for managing and inspecting Docker containers. Written in Go, it leverages a modular panel system to provide a user-friendly interface for executing Docker commands, listing resources, and displaying inspection details—all from your terminal.
 
+![image](https://github.com/user-attachments/assets/e5441bc9-028c-4cc7-ab9a-3bac5bd6ce22)
+
 ## Features
 
 - Interactive Terminal UI:
